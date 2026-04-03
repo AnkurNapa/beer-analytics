@@ -11,7 +11,11 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+if DEBUG:
+    ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+else:
+    # In production, allow Railway domains and any configured hosts
+    ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*.railway.app", "*"])
 
 INSTALLED_APPS = [
     "django.contrib.admin",
