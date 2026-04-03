@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ style.name }} - Beer Styles{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <a href="{% url 'styles_overview' %}" class="text-amber-600 hover:underline">&larr; Back to Styles</a>
+    </div>
+
+    <h1 class="text-4xl font-bold text-amber-900 mb-8">{{ style.name }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Details -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                {% if style.category %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Category</p>
+                        <a href="{% url 'style_category' style.category.slug %}" class="text-amber-600 hover:underline">
+                            {{ style.category.name }}
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if style.description %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Description</p>
+                        <p class="text-gray-700 text-sm">{{ style.description }}</p>
+                    </div>
+                {% endif %}
+
+                {% if style.og_min or style.og_max %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Original Gravity</p>
+                        <p class="text-amber-900">{{ style.og_min }} - {{ style.og_max }}</p>
+                    </div>
+                {% endif %}
+
+                {% if style.abv_min or style.abv_max %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">ABV Range</p>
+                        <p class="text-amber-900">{{ style.abv_min }}% - {{ style.abv_max }}%</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Recipe Trends</h2>
+                <div class="chart-container" data-url="{% url 'style_chart' style.slug 'trends' %}"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">ABV Distribution</h2>
+                <div class="chart-container" data-url="{% url 'style_chart' style.slug 'abv' %}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.querySelectorAll('.chart-container').forEach(el => {
+  fetch(el.dataset.url)
+    .then(r => r.json())
+    .then(data => Plotly.newPlot(el, data.data, data.layout, {responsive: true}))
+    .catch(err => console.error('Chart load error:', err));
+});
+</script>
+{% endblock %}

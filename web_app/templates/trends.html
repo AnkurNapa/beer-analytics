@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Beer Trends{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-amber-900">Beer Trends</h1>
+
+    <!-- Time Period Selector -->
+    <div class="mb-8 flex gap-2 flex-wrap">
+        <a href="{% url 'trends' %}?period=12months" class="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700">
+            Last 12 Months
+        </a>
+        <a href="{% url 'trends' %}?period=5years" class="px-4 py-2 bg-amber-100 text-amber-900 rounded hover:bg-amber-200">
+            5 Years
+        </a>
+        <a href="{% url 'trends' %}?period=10years" class="px-4 py-2 bg-amber-100 text-amber-900 rounded hover:bg-amber-200">
+            10 Years
+        </a>
+        <a href="{% url 'trends' %}?period=all" class="px-4 py-2 bg-amber-100 text-amber-900 rounded hover:bg-amber-200">
+            All Time
+        </a>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">Recipes Over Time</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'recipes_by_month' %}"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">Top Styles</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'top_styles' %}"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">ABV Trends</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'abv_trends' %}"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">IBU Trends</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'ibu_trends' %}"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">Most Popular Hops</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'popular_hops' %}"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-amber-900 mb-4">Color (EBC) Distribution</h2>
+            <div class="chart-container" data-url="{% url 'trend_chart' 'ebc_distribution' %}"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.querySelectorAll('.chart-container').forEach(el => {
+  fetch(el.dataset.url)
+    .then(r => r.json())
+    .then(data => Plotly.newPlot(el, data.data, data.layout, {responsive: true}))
+    .catch(err => console.error('Chart load error:', err));
+});
+</script>
+{% endblock %}

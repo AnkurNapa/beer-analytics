@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ yeast.name }} - Yeasts{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <a href="{% url 'yeasts_overview' %}" class="text-amber-600 hover:underline">&larr; Back to Yeasts</a>
+    </div>
+
+    <h1 class="text-4xl font-bold text-amber-900 mb-8">{{ yeast.name }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Details -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                {% if yeast.category %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Category</p>
+                        <p class="text-amber-700">{{ yeast.category.name }}</p>
+                    </div>
+                {% endif %}
+
+                {% if yeast.min_temperature or yeast.max_temperature %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Fermentation Temperature</p>
+                        {% if is_metric %}
+                            <p class="text-amber-900">{{ yeast.min_temperature }}°C - {{ yeast.max_temperature }}°C</p>
+                        {% else %}
+                            <p class="text-amber-900">{{ yeast.min_temperature|add:0|floatformat:0 }}°F - {{ yeast.max_temperature|add:0|floatformat:0 }}°F</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if yeast.attenuation %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Attenuation</p>
+                        <p class="text-amber-900">{{ yeast.attenuation }}%</p>
+                    </div>
+                {% endif %}
+
+                {% if yeast.description %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Description</p>
+                        <p class="text-gray-700 text-sm">{{ yeast.description }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Usage in Recipes</h2>
+                <div class="chart-container" data-url="{% url 'yeast_chart' id=yeast.id chart_type='usage' %}"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Popular Styles</h2>
+                <div class="chart-container" data-url="{% url 'yeast_chart' id=yeast.id chart_type='styles' %}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.querySelectorAll('.chart-container').forEach(el => {
+  fetch(el.dataset.url)
+    .then(r => r.json())
+    .then(data => Plotly.newPlot(el, data.data, data.layout, {responsive: true}))
+    .catch(err => console.error('Chart load error:', err));
+});
+</script>
+{% endblock %}

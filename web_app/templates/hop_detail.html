@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ hop.name }} - Hops{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <a href="{% url 'hops_overview' %}" class="text-amber-600 hover:underline">&larr; Back to Hops</a>
+    </div>
+
+    <h1 class="text-4xl font-bold text-amber-900 mb-8">{{ hop.name }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Details -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                {% if hop.category %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Category</p>
+                        <p class="text-amber-700">{{ hop.category.name }}</p>
+                    </div>
+                {% endif %}
+
+                {% if hop.alpha_acid_min or hop.alpha_acid_max %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Alpha Acid Range</p>
+                        <p class="text-lg text-amber-900">{{ hop.alpha_acid_min }}% - {{ hop.alpha_acid_max }}%</p>
+                    </div>
+                {% endif %}
+
+                {% if hop.origin %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Origin</p>
+                        <p class="text-amber-700">{{ hop.origin }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Alpha Acid Profile</h2>
+                <div class="chart-container" data-url="{% url 'hop_chart' id=hop.id chart_type='alpha_acid' %}"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Usage by Style</h2>
+                <div class="chart-container" data-url="{% url 'hop_chart' id=hop.id chart_type='style_distribution' %}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.querySelectorAll('.chart-container').forEach(el => {
+  fetch(el.dataset.url)
+    .then(r => r.json())
+    .then(data => Plotly.newPlot(el, data.data, data.layout, {responsive: true}))
+    .catch(err => console.error('Chart load error:', err));
+});
+</script>
+{% endblock %}

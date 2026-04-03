@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{{ fermentable.name }} - Fermentables{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <a href="{% url 'fermentables_overview' %}" class="text-amber-600 hover:underline">&larr; Back to Fermentables</a>
+    </div>
+
+    <h1 class="text-4xl font-bold text-amber-900 mb-8">{{ fermentable.name }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Details -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                {% if fermentable.category %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Category</p>
+                        <p class="text-amber-700">{{ fermentable.category.name }}</p>
+                    </div>
+                {% endif %}
+
+                {% if fermentable.color_ebc %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Color</p>
+                        <p class="text-lg text-amber-900">{{ fermentable.color_ebc }} EBC</p>
+                    </div>
+                {% endif %}
+
+                {% if fermentable.yield %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Yield</p>
+                        <p class="text-amber-900">{{ fermentable.yield }}%</p>
+                    </div>
+                {% endif %}
+
+                {% if fermentable.description %}
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600">Description</p>
+                        <p class="text-gray-700 text-sm">{{ fermentable.description }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Usage in Recipes</h2>
+                <div class="chart-container" data-url="{% url 'fermentable_chart' id=fermentable.id chart_type='usage' %}"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-4">Popular Styles</h2>
+                <div class="chart-container" data-url="{% url 'fermentable_chart' id=fermentable.id chart_type='styles' %}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.querySelectorAll('.chart-container').forEach(el => {
+  fetch(el.dataset.url)
+    .then(r => r.json())
+    .then(data => Plotly.newPlot(el, data.data, data.layout, {responsive: true}))
+    .catch(err => console.error('Chart load error:', err));
+});
+</script>
+{% endblock %}

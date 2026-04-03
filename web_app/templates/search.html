@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Beer Recipe Search{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-amber-900">Recipe Search</h1>
+
+    <!-- Search Form -->
+    <form method="get" class="mb-8 bg-white p-6 rounded-lg shadow-md">
+        <div class="mb-4">
+            <label for="q" class="block text-sm font-medium text-gray-700 mb-2">Recipe Name or Style</label>
+            <input
+                type="text"
+                id="q"
+                name="q"
+                value="{{ search_term }}"
+                placeholder="Search for IPAs, lagers, or specific recipes..."
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label for="hop" class="block text-sm font-medium text-gray-700 mb-2">Filter by Hop</label>
+                <select id="hop" name="hop" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                    <option value="">All Hops</option>
+                    <!-- Populated dynamically or hardcoded -->
+                </select>
+            </div>
+
+            <div>
+                <label for="style" class="block text-sm font-medium text-gray-700 mb-2">Filter by Style</label>
+                <select id="style" name="style" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                    <option value="">All Styles</option>
+                    <!-- Populated dynamically or hardcoded -->
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition">
+            Search Recipes
+        </button>
+    </form>
+
+    <!-- Results -->
+    {% if search_term or results %}
+        <div class="mb-6">
+            <p class="text-gray-600">
+                Found <span class="font-bold text-amber-900">{{ result_count }}</span> recipe{{ result_count|pluralize }}
+                {% if search_term %}for "{{ search_term }}"{% endif %}
+            </p>
+        </div>
+
+        {% if results %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for recipe in results %}
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">{{ recipe.name|default:"Unnamed Recipe" }}</h3>
+                        <p class="text-gray-600 mb-1">
+                            <span class="font-semibold">Style:</span>
+                            {% if recipe.style %}
+                                <a href="{% url 'style_detail' recipe.style.slug %}" class="text-amber-600 hover:underline">
+                                    {{ recipe.style.name }}
+                                </a>
+                            {% else %}
+                                {{ recipe.style_raw|default:"Unknown" }}
+                            {% endif %}
+                        </p>
+                        <p class="text-gray-600 mb-1"><span class="font-semibold">ABV:</span> {{ recipe.abv|default:"-" }}%</p>
+                        <p class="text-gray-600 mb-1"><span class="font-semibold">IBU:</span> {{ recipe.ibu|default:"-" }}</p>
+                        <p class="text-gray-600 mb-1"><span class="font-semibold">Author:</span> {{ recipe.author|default:"Unknown" }}</p>
+                        <p class="text-sm text-gray-500">Source: {{ recipe.source }} ({{ recipe.source_id }})</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                <p class="text-gray-700">No recipes found matching your search.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+            <p class="text-gray-700">Enter a search term or select filters to find recipes.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

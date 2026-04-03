@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}About — Beer Analytics{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    <h1 class="text-3xl font-bold text-amber-800">About Beer Analytics</h1>
+
+    <div class="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
+        <h2 class="text-xl font-bold text-amber-700">What is Beer Analytics?</h2>
+        <p class="text-stone-700">
+            Beer Analytics is a database of 400,000+ beer brewing recipes, built for data analysis.
+            It helps brewers and beer enthusiasts understand brewing trends and recipe composition.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
+        <h2 class="text-xl font-bold text-amber-700">Data Sources</h2>
+        <p class="text-stone-700">
+            This database aggregates publicly available brewing recipes from:
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-stone-700">
+            <li><strong>Brewtoad</strong> — 330,000+ preserved recipes (legacy archive)</li>
+            <li><strong>BrewGr</strong> — 93,000+ preserved recipes (legacy archive)</li>
+            <li><strong>Homebrewing Communities</strong> — ongoing recipe contributions</li>
+            <li><strong>BJCP Standards</strong> — official beer style definitions</li>
+            <li><strong>Hop Producer Data</strong> — Hopsteiner, Yakima Chief, BarthHaas, Crosby</li>
+        </ul>
+    </div>
+
+    <div class="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
+        <h2 class="text-xl font-bold text-amber-700">India-Friendly</h2>
+        <p class="text-stone-700">
+            This is a minimal, India-specific version with metric units (liters, kilograms, Celsius) as the default.
+            Toggle between metric and imperial units anytime using the button in the top navigation.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
+        <h2 class="text-xl font-bold text-amber-700">License</h2>
+        <p class="text-stone-700">
+            Data is provided under <strong>Creative Commons Attribution-ShareAlike 4.0</strong> license.
+            Built with open-source tools and publicly available data.
+        </p>
+    </div>
+</div>
+{% endblock %}
